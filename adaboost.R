@@ -23,7 +23,6 @@ train_test <- function() {
       return(list(training, testing))
 }
 
-
 train <- function(X, w, y) {
       p <- ncol(X)
       n <- nrow(X)
@@ -31,7 +30,6 @@ train <- function(X, w, y) {
       min_err <- c()
       min_thet <- c()
       min_m <- c()
-      
       
       for (j in 1:p) {
             x_j = X[,j]
@@ -55,7 +53,6 @@ train <- function(X, w, y) {
             min_err[j] = min(err_thet)
             min_thet[j] = thetas[min_index]
             min_m[j] = m.ls[which.min(m.ls)]
-            
       }
       
       op.j = which.min(min_err)
@@ -88,9 +85,7 @@ agg_class <- function(X, alpha, allPars) {
       return(c_hat)
 }
 
-
 adaBoost <- function(X, y, B) {
-      
       e.b = NA
       allPars = list()
       alpha = c()
@@ -108,13 +103,9 @@ adaBoost <- function(X, y, B) {
             alpha.b = log((1-e.b)/e.b)
             alpha[[b]] = alpha.b
             w <- w*exp(alpha.b*(y != c.b))
-            
       }   
-      
       return(list(alpha = alpha, allPars = allPars))
 }
-
-
 
 run.adaboost <- function(training, testing, K, B) {
       train.shuffle <- training[sample(1:nrow(training)),]
@@ -147,13 +138,10 @@ run.adaboost <- function(training, testing, K, B) {
                   
                   test.pred <- agg_class(test.X, train.adaBoost$alpha, train.adaBoost$allPars)
                   test.err[k, b] = mean(test.pred !=test.y)
-                  
             }
       }
       return(list(cv.err, test.err))
 }
-
-
 
 train_test_data = train_test()
 training = train_test_data[[1]]
@@ -161,7 +149,6 @@ testing = train_test_data[[2]]
 
 K = 5
 B = 40
-
 
 cv_test.err = run.adaboost(training, testing, K, B)
 
@@ -173,7 +160,6 @@ train.err.mean = apply(train.err, 2, mean)
 cv.err.mean = apply(cv.err, 2, mean)
 test.err.mean = apply(test.err, 2, mean)
 
-
 results= data.frame(Train = train.err.mean, CV = cv.err.mean, Test = test.err.mean)
 
 melt.results = melt(results)
@@ -181,5 +167,3 @@ melt.results$B = rep(1:B, 3)
 colnames(melt.results) = c("Error Type", "Error Rate", "B")
 ggplot(melt.results) + 
       geom_line(aes(B,`Error Rate`, colour = `Error Type`)) 
-
-
